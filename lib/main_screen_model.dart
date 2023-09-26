@@ -3,7 +3,7 @@ class Vaccin {
   final String description;
   final DateTime dueDate;
   final bool isComplete;
-  final String etc;
+  final String memo;
   final VaccinType vaccinType;
   final int round; // 몇차
 
@@ -12,7 +12,7 @@ class Vaccin {
     required this.description,
     required this.dueDate,
     required this.isComplete,
-    this.etc = '',
+    this.memo = '',
     required this.vaccinType,
     this.round = 0,
   });
@@ -23,7 +23,7 @@ class Vaccin {
     bool? mandatory,
     DateTime? dueDate,
     bool? isComplete,
-    String? etc,
+    String? memo,
     VaccinType? vaccinType,
     int? round,
   }) {
@@ -32,7 +32,7 @@ class Vaccin {
       description: description ?? this.description,
       dueDate: dueDate ?? this.dueDate,
       isComplete: isComplete ?? this.isComplete,
-      etc: etc ?? this.etc,
+      memo: memo ?? this.memo,
       vaccinType: vaccinType ?? this.vaccinType,
       round: round ?? this.round,
     );

@@ -7,12 +7,20 @@ class MainScreenBloc with ChangeNotifier {
   final childBirthdayNotifier = ValueNotifier<DateTime>(DateTime.now());
   final childNameNotifier = ValueNotifier<String>('');
 
+  ///// 가이드용
+  final guideCompleteNotifier = ValueNotifier<bool>(false);
+  final guideMemoNotifier = ValueNotifier<String>('한번 탭하여 최대 20자 메모도 적을 수 있어요.');
+  final guideDueDateNotifier = ValueNotifier<DateTime>(DateTime.now());
+
   MainScreenBloc() {
     _notifiers
       ..addAll([
         vaccinListNotifier,
         childBirthdayNotifier,
         childNameNotifier,
+        guideCompleteNotifier,
+        guideMemoNotifier,
+        guideDueDateNotifier,
       ])
       ..forEach((element) {
         element.addListener(notifyListeners);
@@ -36,7 +44,6 @@ class MainScreenBloc with ChangeNotifier {
     if (childBirthday != null) {
       setChildBirthday(childBirthday);
     }
-
 
     vaccinListNotifier.value = [
       //0개월
@@ -198,7 +205,7 @@ class MainScreenBloc with ChangeNotifier {
         description: '소아마비(폴리오)(3차)',
         dueDate: childBirthdayNotifier.value.addMonths(6),
         isComplete: false,
-        etc: '3차 접종은 생후 6~18개월까지 접종가능',
+        memo: '3차 접종은 생후 6~18개월까지 접종가능',
         vaccinType: VaccinType.IPV,
         round: 3,
       ),
@@ -251,7 +258,7 @@ class MainScreenBloc with ChangeNotifier {
         description: 'A형간염(2차)',
         dueDate: childBirthdayNotifier.value.addMonths(12),
         isComplete: false,
-        etc: 'A형간염(1차) 접종 후 6-12개월 사이',
+        memo: 'A형간염(1차) 접종 후 6-12개월 사이',
         vaccinType: VaccinType.HepA,
         round: 2,
       ),
@@ -269,7 +276,7 @@ class MainScreenBloc with ChangeNotifier {
         description: '일본뇌염(IJEV)(사백신)(2차)',
         dueDate: childBirthdayNotifier.value.addMonths(12),
         isComplete: false,
-        etc: '일본뇌염(IJEV)(사백신)(1차) 접종 한달 후',
+        memo: '일본뇌염(IJEV)(사백신)(1차) 접종 한달 후',
         vaccinType: VaccinType.IJEV,
         round: 2,
       ),
@@ -298,7 +305,7 @@ class MainScreenBloc with ChangeNotifier {
         description: '일본뇌염(IJEV)(사백신)(3차)',
         dueDate: childBirthdayNotifier.value.addMonths(24),
         isComplete: false,
-        etc: '일본뇌염(IJEV)(사백신)(2차) 접종 1년 후',
+        memo: '일본뇌염(IJEV)(사백신)(2차) 접종 1년 후',
         vaccinType: VaccinType.IJEV,
         round: 3,
       ),
@@ -307,7 +314,7 @@ class MainScreenBloc with ChangeNotifier {
         description: '일본뇌염(LJEV)(생백신)(2차)',
         dueDate: childBirthdayNotifier.value.addMonths(24),
         isComplete: false,
-        etc: '일본뇌염(LJEV)(생백신)(1차) 접종 1년 후',
+        memo: '일본뇌염(LJEV)(생백신)(1차) 접종 1년 후',
         vaccinType: VaccinType.LJEV,
         round: 2,
       ),
@@ -379,7 +386,7 @@ class MainScreenBloc with ChangeNotifier {
         description: '사람유두종바이러스(HPV)(2차)',
         dueDate: childBirthdayNotifier.value.addYears(11),
         isComplete: false,
-        etc: '사람유두종바이러스(HPV)(1차) 접종 후 6~12개월 간격',
+        memo: '사람유두종바이러스(HPV)(1차) 접종 후 6~12개월 간격',
         vaccinType: VaccinType.HPV,
         round: 2,
       ),
@@ -418,6 +425,21 @@ class MainScreenBloc with ChangeNotifier {
     vaccinListNotifier.value[index] =
         vaccinListNotifier.value[index].copyWith(dueDate: duedate);
     vaccinListNotifier.notifyListeners();
+  }
+
+  void setVaccinMemo(int index, String memo) {
+    vaccinListNotifier.value[index] =
+        vaccinListNotifier.value[index].copyWith(memo: memo);
+    vaccinListNotifier.notifyListeners();
+  }
+
+  /////////// 가이드용 ///////////
+  void setGuideVaccinDueDate(DateTime duedate) {
+    guideDueDateNotifier.value = duedate;
+  }
+
+  void setGuideComplete(bool isComplete) {
+    guideCompleteNotifier.value = isComplete;
   }
 }
 

@@ -63,7 +63,7 @@ class _InitScreenState extends State<InitScreen> {
           children: [
             ///// 이름 입력
             SizedBox(
-              height: 70,
+              height: 80,
               child: TextFormField(
                 controller: nameTextEditingController,
                 maxLength: 3,
@@ -83,7 +83,7 @@ class _InitScreenState extends State<InitScreen> {
 
             ///// 출생 입력
             SizedBox(
-              height: 70,
+              height: 60,
               child: TextFormField(
                 controller: birthdayTextEditingController,
                 decoration: InputDecoration(
