@@ -31,7 +31,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.vaccin.description),
+        title: Text(widget.vaccin.vaccinType.name),
       ),
       body: SafeArea(
         child: WebViewWidget(controller: _webViewController),
