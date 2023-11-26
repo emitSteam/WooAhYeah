@@ -7,13 +7,9 @@ import 'package:woo_ah_yeah/main_screen_model.dart';
 import 'package:woo_ah_yeah/webview_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  final DateTime? childBirthday;
-  final String? childName;
 
   const MainScreen({
     Key? key,
-    this.childBirthday,
-    this.childName,
   }) : super(key: key);
 
   @override
@@ -26,10 +22,7 @@ class _MainScreenState extends State<MainScreen> {
     return ChangeNotifierProvider<MainScreenBloc>(
       create: (context) {
         return MainScreenBloc()
-          ..fetch(
-            childBirthday: widget.childBirthday,
-            childName: widget.childName,
-          );
+          ..fetch();
       },
       child: Builder(
         builder: (context) {
@@ -139,289 +132,291 @@ class _MainScreenState extends State<MainScreen> {
                       height: 20,
                     ),
 
-                    ///// 백신 리스트
-                    Builder(
-                      builder: (context) {
-                        return ListView.separated(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: VaccinGroupType.values.length,
-                          itemBuilder: (BuildContext context, int groupIndex) {
-                            final vaccinListByGroup = context
-                                .watch<MainScreenBloc>()
-                                .vaccinListNotifier
-                                .value
-                                .where((element) =>
-                                    element.groupType ==
-                                    VaccinGroupType.values[groupIndex])
-                                .toList();
+                    if (context.select((MainScreenBloc bloc) => bloc.vaccinListNotifier.value.isNotEmpty))... {
+                      ///// 백신 리스트
+                      Builder(
+                        builder: (context) {
+                          return ListView.separated(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: VaccinGroupType.values.length,
+                            itemBuilder: (BuildContext context, int groupIndex) {
+                              final vaccinListByGroup = context
+                                  .watch<MainScreenBloc>()
+                                  .vaccinListNotifier
+                                  .value
+                                  .where((element) =>
+                              element.groupType ==
+                                  VaccinGroupType.values[groupIndex])
+                                  .toList();
 
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ///// 개월 정보
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 7,
-                                    horizontal: 25,
-                                  ),
-                                  child: Text(
-                                    vaccinListByGroup
-                                        .first.groupType.monthString,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 20,
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ///// 개월 정보
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 7,
+                                      horizontal: 25,
                                     ),
-                                    overflow: TextOverflow.ellipsis,
+                                    child: Text(
+                                      vaccinListByGroup
+                                          .first.groupType.monthString,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 20,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                ),
 
-                                ///// 백신 그룹별 리스트
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
+                                  ///// 백신 그룹별 리스트
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        style: BorderStyle.solid,
+                                        width: 1.0,
+                                      ),
                                       color: Colors.white,
-                                      style: BorderStyle.solid,
-                                      width: 1.0,
+                                      borderRadius: BorderRadius.circular(30.0),
                                     ),
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(30.0),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 15,
-                                    vertical: 15,
-                                  ),
-                                  child: ListView.separated(
-                                    shrinkWrap: true,
-                                    itemCount: vaccinListByGroup.length,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      final item = vaccinListByGroup[index];
-                                      return GestureDetector(
-                                        onTap: () {
-                                          ///// 메모 입력
-                                          showDialog(
-                                            context: context,
-                                            builder: (innerContext) {
-                                              String memo = item.memo;
-                                              return AlertDialog(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          15.0),
-                                                ),
-                                                title: const Text("메모"),
-                                                content: TextFormField(
-                                                  initialValue: memo,
-                                                  maxLines: 1,
-                                                  maxLength: 20,
-                                                  onChanged: (value) {
-                                                    memo = value;
-                                                  },
-                                                ),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    child: const Text(
-                                                      '취소',
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                    onPressed: () {
-                                                      Navigator.of(innerContext)
-                                                          .pop();
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 15,
+                                      vertical: 15,
+                                    ),
+                                    child: ListView.separated(
+                                      shrinkWrap: true,
+                                      itemCount: vaccinListByGroup.length,
+                                      physics:
+                                      const NeverScrollableScrollPhysics(),
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        final item = vaccinListByGroup[index];
+                                        return GestureDetector(
+                                          onTap: () {
+                                            ///// 메모 입력
+                                            showDialog(
+                                              context: context,
+                                              builder: (innerContext) {
+                                                String memo = item.memo;
+                                                return AlertDialog(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                    BorderRadius.circular(
+                                                        15.0),
+                                                  ),
+                                                  title: const Text("메모"),
+                                                  content: TextFormField(
+                                                    initialValue: memo,
+                                                    maxLines: 1,
+                                                    maxLength: 20,
+                                                    onChanged: (value) {
+                                                      memo = value;
                                                     },
                                                   ),
-                                                  TextButton(
-                                                    child: const Text(
-                                                      '저장',
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.green,
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      child: const Text(
+                                                        '취소',
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                        ),
                                                       ),
+                                                      onPressed: () {
+                                                        Navigator.of(innerContext)
+                                                            .pop();
+                                                      },
                                                     ),
-                                                    onPressed: () {
-                                                      context
-                                                          .read<
-                                                              MainScreenBloc>()
-                                                          .setVaccinMemo(
-                                                              index, memo);
-                                                      Navigator.of(innerContext)
-                                                          .pop();
-                                                    },
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                        onDoubleTap: () {
-                                          ///// 완료 처리
-                                          context
-                                              .read<MainScreenBloc>()
-                                              .setVaccinComplete(
-                                                  item, !item.isComplete);
-                                        },
-                                        child: Container(
-                                          color: Colors.white,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisSize: MainAxisSize.max,
-                                            children: [
-                                              ///// 접종완료 여부
-                                              if (item.isComplete) ...{
-                                                const Text(
-                                                  '완료!',
-                                                  style: TextStyle(
-                                                    color: Colors.green,
-                                                    fontSize: 17,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-
-                                                ///// 여백
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                              },
-
-                                              ///// 예방접종명, 날짜, 메모
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  ///// 백신이름
-                                                  Text(
-                                                    (item.round > 0
-                                                        ? '${item.vaccinType.name} ${item.round}차'
-                                                        : item.vaccinType.name),
-                                                    style: const TextStyle(
-                                                      fontWeight:
+                                                    TextButton(
+                                                      child: const Text(
+                                                        '저장',
+                                                        style: TextStyle(
+                                                          fontWeight:
                                                           FontWeight.bold,
-                                                      fontSize: 16,
+                                                          color: Colors.green,
+                                                        ),
+                                                      ),
+                                                      onPressed: () {
+                                                        context
+                                                            .read<
+                                                            MainScreenBloc>()
+                                                            .setVaccinMemo(
+                                                            index, memo);
+                                                        Navigator.of(innerContext)
+                                                            .pop();
+                                                      },
                                                     ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                          onDoubleTap: () {
+                                            ///// 완료 처리
+                                            context
+                                                .read<MainScreenBloc>()
+                                                .setVaccinComplete(
+                                                item, !item.isComplete);
+                                          },
+                                          child: Container(
+                                            color: Colors.white,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.max,
+                                              children: [
+                                                ///// 접종완료 여부
+                                                if (item.isComplete) ...{
+                                                  const Text(
+                                                    '완료!',
+                                                    style: TextStyle(
+                                                      color: Colors.green,
+                                                      fontSize: 17,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
                                                   ),
 
                                                   ///// 여백
                                                   const SizedBox(
                                                     width: 10,
                                                   ),
-
-                                                  ///// 백신 접종일
-                                                  GestureDetector(
-                                                    onTap: () async {
-                                                      final selectedDate =
-                                                          await showDatePicker(
-                                                        context: context,
-                                                        initialDate:
-                                                            item.dueDate,
-                                                        firstDate: context
-                                                            .read<
-                                                                MainScreenBloc>()
-                                                            .childBirthdayNotifier
-                                                            .value,
-                                                        lastDate: item.dueDate
-                                                            .addYears(10),
-                                                      );
-                                                      if (selectedDate !=
-                                                          null) {
-                                                        if (!context.mounted) {
-                                                          return;
-                                                        }
-                                                        context
-                                                            .read<
-                                                                MainScreenBloc>()
-                                                            .setVaccinDueDate(
-                                                                index,
-                                                                selectedDate);
-                                                      }
-                                                    },
-                                                    child: Text(
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(item.dueDate),
-                                                      style: const TextStyle(
-                                                        color:
-                                                            Color(0xff393939),
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-
-                                                  ///// 메모
-                                                  if (item.memo.isNotEmpty) ...{
-                                                    Text(
-                                                      item.memo,
-                                                      style: const TextStyle(
-                                                        color:
-                                                            Color(0xff393939),
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  },
-                                                ],
-                                              ),
-
-                                              ///// 여백
-                                              const Spacer(),
-
-                                              ///// info
-                                              GestureDetector(
-                                                onTap: () {
-                                                  ///// 질병관리청 정보 페이지 이동
-                                                  Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          WebViewScreen(
-                                                              vaccin: item),
-                                                    ),
-                                                  );
                                                 },
-                                                child: SvgPicture.asset(
-                                                  'assets/image/information.svg',
-                                                  width: 30,
-                                                  height: 30,
+
+                                                ///// 예방접종명, 날짜, 메모
+                                                Column(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    ///// 백신이름
+                                                    Text(
+                                                      (item.round > 0
+                                                          ? '${item.vaccinType.name} ${item.round}차'
+                                                          : item.vaccinType.name),
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                        FontWeight.bold,
+                                                        fontSize: 16,
+                                                      ),
+                                                      overflow:
+                                                      TextOverflow.ellipsis,
+                                                    ),
+
+                                                    ///// 여백
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+
+                                                    ///// 백신 접종일
+                                                    GestureDetector(
+                                                      onTap: () async {
+                                                        final selectedDate =
+                                                        await showDatePicker(
+                                                          context: context,
+                                                          initialDate:
+                                                          item.dueDate,
+                                                          firstDate: context
+                                                              .read<
+                                                              MainScreenBloc>()
+                                                              .childBirthdayNotifier
+                                                              .value,
+                                                          lastDate: item.dueDate
+                                                              .addYears(10),
+                                                        );
+                                                        if (selectedDate !=
+                                                            null) {
+                                                          if (!context.mounted) {
+                                                            return;
+                                                          }
+                                                          context
+                                                              .read<
+                                                              MainScreenBloc>()
+                                                              .setVaccinDueDate(
+                                                              index,
+                                                              selectedDate);
+                                                        }
+                                                      },
+                                                      child: Text(
+                                                        DateFormat('yyyy-MM-dd')
+                                                            .format(item.dueDate),
+                                                        style: const TextStyle(
+                                                          color:
+                                                          Color(0xff393939),
+                                                        ),
+                                                        overflow:
+                                                        TextOverflow.ellipsis,
+                                                      ),
+                                                    ),
+
+                                                    ///// 메모
+                                                    if (item.memo.isNotEmpty) ...{
+                                                      Text(
+                                                        item.memo,
+                                                        style: const TextStyle(
+                                                          color:
+                                                          Color(0xff393939),
+                                                        ),
+                                                        overflow:
+                                                        TextOverflow.ellipsis,
+                                                      ),
+                                                    },
+                                                  ],
                                                 ),
-                                              ),
-                                            ],
+
+                                                ///// 여백
+                                                const Spacer(),
+
+                                                ///// info
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    ///// 질병관리청 정보 페이지 이동
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            WebViewScreen(
+                                                                vaccin: item),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: SvgPicture.asset(
+                                                    'assets/image/information.svg',
+                                                    width: 30,
+                                                    height: 30,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                    separatorBuilder:
-                                        (BuildContext context, int index) {
-                                      return const Divider(
-                                        indent: 20,
-                                        color: Color(0xfff4f3f9),
-                                        height: 20,
-                                      );
-                                    },
+                                        );
+                                      },
+                                      separatorBuilder:
+                                          (BuildContext context, int index) {
+                                        return const Divider(
+                                          indent: 20,
+                                          color: Color(0xfff4f3f9),
+                                          height: 20,
+                                        );
+                                      },
+                                    ),
                                   ),
-                                ),
-                              ],
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            return const SizedBox(
-                              height: 20,
-                            );
-                          },
-                        );
-                      },
-                    ),
+                                ],
+                              );
+                            },
+                            separatorBuilder: (BuildContext context, int index) {
+                              return const SizedBox(
+                                height: 20,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    }
                   ],
                 ),
               ),

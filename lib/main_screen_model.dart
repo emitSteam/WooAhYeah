@@ -1,10 +1,26 @@
+
+import 'package:isar/isar.dart';
+
+part 'main_screen_model.g.dart';
+
+@collection
 class Vaccin {
+  Id id = Isar.autoIncrement;
+
+  @Enumerated(EnumType.ordinal)
   final VaccinGroupType groupType;
+
   final String description;
+
   final DateTime dueDate;
+
   final bool isComplete;
+
   final String memo;
+
+  @Enumerated(EnumType.ordinal)
   final VaccinType vaccinType;
+
   final int round; // 몇차
 
   Vaccin({

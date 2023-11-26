@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:woo_ah_yeah/main_screen.dart';
 
 class InitScreen extends StatefulWidget {
@@ -127,12 +128,15 @@ class _InitScreenState extends State<InitScreen> {
                   Fluttertoast.showToast(msg: '아이 생일을 입력해주세요.');
                   return;
                 }
+
+                setChildInfo(
+                  childName: nameTextEditingController.text,
+                  childBirthday: childBirthday,
+                );
+
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
-                      builder: (context) => MainScreen(
-                        childName: nameTextEditingController.text,
-                        childBirthday: childBirthday,
-                      ),
+                      builder: (context) => const MainScreen(),
                     ),
                     (route) => false);
               },
@@ -159,5 +163,12 @@ class _InitScreenState extends State<InitScreen> {
         ),
       ),
     );
+  }
+
+  void setChildInfo({required String childName, required DateTime childBirthday}) async {
+    // 공유저장소에 유저 DB의 인덱스 저장
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('childName', childName);
+    await prefs.setInt('childBirthday', childBirthday.millisecondsSinceEpoch);
   }
 }
